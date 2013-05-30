@@ -27,6 +27,15 @@ component output="false" {
         return this;
     }
 
+    /**
+    * Verifies the submitted value from the user against the user secret, with optional grace for the last few
+    * token values
+    *
+    * @param base32secret the Base32 encoded shared secret key
+    * @param userValue the value that the user submitted
+    * @param grace the amount of previous tokens to allow (1 means allow the current and last token value)
+    * @return a boolean whether the token was valid or not
+    */
     public boolean function verifyGoogleToken (required string base32Secret, required string userValue, numeric grace = 0)
     {
         for (var i = 0; i <= grace; i++)
@@ -39,25 +48,45 @@ component output="false" {
         return false;
     }
 
+    /**
+    * Gets the value of the token for a particular offset from the current time interval
+    *
+    * @param base32secret the Base32 encoded shared secret key
+    * @param offset the number of intervals from the current one to use (defaults to the current time interval)
+    * @return a string containing the token for the specified offset interval
+    */
     public string function getGoogleToken (required string base32Secret, numeric offset = 0)
     {
         var intervals = JavaCast("long", Int((createObject("java", "java.lang.System").currentTimeMillis() / 1000) / 30) + offset);
         return getOneTimeToken(base32Secret, intervals);
     }
 
+    /**
+    * Returns a URL that can be used in a QR code with the Google Authenticator app
+    *
+    * @param email the email address of the user account
+    * @param key the Base32 encoded secret key to use in the code
+    */
     public string function getOTPURL(required string email, required string key)
     {
         return 'otpauth://totp/#arguments.email#?secret=#arguments.key#';
     }
 
-    public string function getOneTimeToken (required string base32Secret, required numeric intervals)
+    /**
+    * The core TOTP function that gets the current value of the token for a particular secret key and numeric counter
+    *
+    * @param base32secret the Base32 encoded secret key
+    * @param counter the counter value to use
+    * @return a string representing the current token value
+    */
+    public string function getOneTimeToken (required string base32Secret, required numeric counter)
     {
         var key = base32decode(secret);
         var secretKeySpec = createObject("java", "javax.crypto.spec.SecretKeySpec" ).init(key, "HmacSHA1");
         var mac = createObject("java", "javax.crypto.Mac").getInstance(secretKeySpec.getAlgorithm());
         mac.init(secretKeySpec);
         var buffer = createObject("java", "java.nio.ByteBuffer").allocate(8);
-        buffer.putLong(intervals);
+        buffer.putLong(counter);
         var h = mac.doFinal(buffer.array());
         var t = h[20];
         if (t < 0) t += 256;
@@ -83,7 +112,15 @@ component output="false" {
 
         return numberFormat(num, "000000");
     }
-        public string function generateKey (required string password, array salt = [])
+
+    /**
+    * Generates a Base32 encoded secret key for use with the token functions
+    * 
+    * @param password a password to be used as the seed for the secret key
+    * @param salt a Java byte[16] array containing a salt - if left blank a random salt will be generated (recommended)
+    * @return the Base32 encoded secret key
+    */
+    public string function generateKey (required string password, array salt = [])
     {
         if (arrayLen(salt) NEQ 16)
         {
@@ -106,6 +143,10 @@ component output="false" {
     * via the Apache Commons Codec, however this was only added in v1.5 and CF10 includes v1.3.
     *
     * I didn't want to create a dependency on JavaLoader or similar just for one simple(ish) encoder.
+    *
+    * @param array of Java byte[] to be encoded
+    * @return a Base32 encoded string
+    *
     */
     public string function Base32encode (required any inputBytes)
     {
@@ -221,6 +262,11 @@ component output="false" {
           15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25                     // 50-5a O-Z
     ];
 
+    /**
+    * Decodes a Base32 encoded string
+    * @param encoded the encoded string to decode
+    * @return a byte[] array of decoded values
+    */
     public any function base32decode (required string encoded)
     {
         var decoded = "";
@@ -265,7 +311,7 @@ component output="false" {
     }
 
     /**
-    * Convenience function for decoding a Base32 string
+    * Convenience function for decoding a Base32 string to a string
     */
     public string function Base32decodeString (required any string, string encoding = "utf-8")
     {
