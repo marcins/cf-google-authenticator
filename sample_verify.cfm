@@ -21,23 +21,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 --->
+<cfparam name="url.secret" default="">
+<cfparam name="form.token" default="">
+<p><strong>Warning! You would never expose the user's secret value like this, nor would you ever display the "expected" value of the token. This is purely an example so you can see your Google Authenticator is returning the same value for the secret.</strong></p>
+
+<form action="" method="POST">
+    <input type="hidden" name="secret" value="#url.secret#" />
+    <label for="token">Token: <input type="text" name="token" id="token" value="<cfoutput>#form.token#</cfoutput>" /></label>
+    <input type="submit" value="Verify" />
+</form>
+
 <cfif CGI.REQUEST_METHOD EQ "POST">
     <cfscript>
     auth = new authenticator.GoogleAuthenticator();
-    key = auth.generateKey(form.password);
+    verified = auth.verifyGoogleToken(url.secret, form.token, 1);
     </cfscript>
+    <cfoutput>
+    <p>Verified: #verified#</p>
+    </cfoutput>
 </cfif>
-<form action="" method="POST">
-    <label for="email">Email: <input type="text" name="email" id="email" /></label>
-    <label for="password">Password: <input type="password" name="password" id="password" /></label>
-    <input type="submit" value="Generate" />
-</form>
-
-<cfif isDefined("key")>
-    <cfoutput><p>Your secret key is: #key#</p></cfoutput>
-    <div id="qrcode"></div>
-    <script src="qrcode.min.js"></script>
-    <cfoutput><script>new QRCode(document.getElementById('qrcode'), '#jsstringformat(auth.getOTPURL(form.email, key))#');</script></cfoutput>
-    <p><a href="sample_check.cfm?secret=<cfoutput>#key#</cfoutput>">Check token</p>
-    <p><a href="sample_verify.cfm?secret=<cfoutput>#key#</cfoutput>">Verify token</p>
-</cfif>
+<p><a href="sample_check.cfm?secret=<cfoutput>#url.secret#</cfoutput>">Check token</p>

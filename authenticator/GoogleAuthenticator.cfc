@@ -27,11 +27,11 @@ component output="false" {
         return this;
     }
 
-    public boolean function verifyGoogleToken (required string base32Secret, required string userValue, numeric grace = 1)
+    public boolean function verifyGoogleToken (required string base32Secret, required string userValue, numeric grace = 0)
     {
-        for (var i = 0; i < grace; i++)
+        for (var i = 0; i <= grace; i++)
         {
-            var expectedToken = getGoogleToken(base32Secret, -grace);
+            var expectedToken = getGoogleToken(base32Secret, -i);
             if (expectedToken == userValue) {
                 return true;
             }
