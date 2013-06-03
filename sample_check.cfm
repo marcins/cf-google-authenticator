@@ -37,6 +37,6 @@ THE SOFTWARE.
     <cfoutput>
     <p>Current value: #value#</p>
     <p>Last value: #lastValue#</p>
-    </cfoutput
+    </cfoutput>
 </cfif>
 <p><a href="sample_verify.cfm?secret=<cfoutput>#url.secret#</cfoutput>">Verify token</p>
