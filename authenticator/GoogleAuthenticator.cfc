@@ -81,12 +81,12 @@ component output="false" {
     */
     public string function getOneTimeToken (required string base32Secret, required numeric counter)
     {
-        var key = base32decode(secret);
+        var key = base32decode(arguments.base32Secret);
         var secretKeySpec = createObject("java", "javax.crypto.spec.SecretKeySpec" ).init(key, "HmacSHA1");
         var mac = createObject("java", "javax.crypto.Mac").getInstance(secretKeySpec.getAlgorithm());
         mac.init(secretKeySpec);
         var buffer = createObject("java", "java.nio.ByteBuffer").allocate(8);
-        buffer.putLong(counter);
+        buffer.putLong(arguments.counter);
         var h = mac.doFinal(buffer.array());
         var t = h[20];
         if (t < 0) t += 256;
@@ -115,7 +115,7 @@ component output="false" {
 
     /**
     * Generates a Base32 encoded secret key for use with the token functions
-    * 
+    *
     * @param password a password to be used as the seed for the secret key
     * @param salt a Java byte[16] array containing a salt - if left blank a random salt will be generated (recommended)
     * @return the Base32 encoded secret key
