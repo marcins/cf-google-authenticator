@@ -9,8 +9,9 @@
 <p>For more background on this project see the <a href="https://github.com/marcins/cf-google-authenticator">Github repo</a> or this <a href="http://junkheap.net/blog/2013/05/30/implementing-google-authenticator-support-in-coldfusion/">blog post about it</a>.
 
 <ul>
-    <li><a href="sample_generate.cfm">Generate a new token</a></li>
-    <li><a href="sample_check.cfm">Show value for a known secret</a></li>
+    <li><a href="tests/index.cfm">Run MXUnit Tests (assumes mapping for "/mxunit" exists at the server level)</a></li>
+    <li><a href="sample/sample_generate.cfm">Generate a new token</a></li>
+    <li><a href="sample/sample_check.cfm">Show value for a known secret</a></li>
 </ul>
 </body>
 </html>
