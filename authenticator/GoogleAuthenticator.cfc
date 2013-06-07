@@ -40,7 +40,7 @@ component output="false" {
     {
         for (var i = 0; i <= grace; i++)
         {
-            var expectedToken = getGoogleToken(base32Secret, -i);
+            var expectedToken = getGoogleToken(base32Secret, -i, getCurrentTime());
             if (expectedToken == userValue) {
                 return true;
             }
@@ -55,12 +55,9 @@ component output="false" {
     * @param offset the number of intervals from the current one to use (defaults to the current time interval)
     * @return a string containing the token for the specified offset interval
     */
-    public string function getGoogleToken (required string base32Secret, numeric offset = 0, numeric currentTime)
+    public string function getGoogleToken (required string base32Secret, numeric offset = 0)
     {
-        if (not structKeyExists(arguments, "currentTime")) {
-            arguments.currentTime = createObject("java", "java.lang.System").currentTimeMillis();
-        }
-        var intervals = JavaCast("long", Int((arguments.currentTime / 1000) / 30) + arguments.offset);
+        var intervals = JavaCast("long", Int((getCurrentTime() / 1000) / 30) + arguments.offset);
         return getOneTimeToken(arguments.base32Secret, intervals);
     }
 
@@ -323,5 +320,10 @@ component output="false" {
     public string function Base32decodeString (required any string, string encoding = "utf-8")
     {
         return charsetEncode(base32decode(string), encoding);//createObject("java", "java.lang.String").init(base32decode(string));
+    }
+
+    private numeric function getCurrentTime()
+    {
+        return createObject("java", "java.lang.System").currentTimeMillis();
     }
 }

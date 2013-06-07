@@ -26,6 +26,16 @@ component extends="mxunit.framework.TestCase" output="false" {
         assertEquals("D5NJOIFNXEB4DL7M", key);
     }
 
+    private numeric function returnTimeZero()
+    {
+        return 0;
+    }
+
+    private numeric function returnTimeKnown()
+    {
+        return 1000;
+    }
+
     public void function testGetToken ()
     {
         var token = auth.getOneTimeToken("D5NJOIFNXEB4DL7M", 0);
@@ -34,7 +44,18 @@ component extends="mxunit.framework.TestCase" output="false" {
 
     public void function testGetGoogleToken ()
     {
-        var token = auth.getGoogleToken("D5NJOIFNXEB4DL7M", 0, 0);
+        injectMethod(auth, this, "returnTimeZero", "getCurrentTime");
+        var token = auth.getGoogleToken("D5NJOIFNXEB4DL7M");
         assertEquals("731217", token);
+    }
+
+    public void function testVerifyToken ()
+    {
+        injectMethod(auth, this, "returnTimeZero", "getCurrentTime");
+        assertFalse(auth.verifyGoogleToken("D5NJOIFNXEB4DL7M", "000000", 0), "Expected invalid value to fail");
+        assertTrue(auth.verifyGoogleToken("D5NJOIFNXEB4DL7M", "731217", 0), "Expected known value to succeed");
+        assertFalse(auth.verifyGoogleToken("D5NJOIFNXEB4DL7M", "434975", 0), "Expected last value to fail with no grace");
+        assertTrue(auth.verifyGoogleToken("D5NJOIFNXEB4DL7M", "434975", 1), "Expected last value to succeed with grace");
+        assertTrue(auth.verifyGoogleToken("D5NJOIFNXEB4DL7M", "434975", 2), "Expected last value to succeed with excess grace");
     }
 }
