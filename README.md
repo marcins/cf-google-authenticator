@@ -28,6 +28,10 @@ There's a simple sample in the project where you can generate a secret key and t
 
 The samples use [qrcode.js](http://davidshimjs.github.io/qrcodejs/).
 
+## Tests
+
+There are some [mxunit](http://mxunit.org/) based tests that can be run from `/tests/index.cfm`.  They assume that mxunit is mapped at the server level to /mxunit.  If we had Railo CLI I could make them not depend on a web server!
+
 ## Licence
 
 The MIT License (MIT)

@@ -40,7 +40,7 @@ component output="false" {
     {
         for (var i = 0; i <= grace; i++)
         {
-            var expectedToken = getGoogleToken(base32Secret, -i);
+            var expectedToken = getGoogleToken(base32Secret, -i, getCurrentTime());
             if (expectedToken == userValue) {
                 return true;
             }
@@ -57,8 +57,8 @@ component output="false" {
     */
     public string function getGoogleToken (required string base32Secret, numeric offset = 0)
     {
-        var intervals = JavaCast("long", Int((createObject("java", "java.lang.System").currentTimeMillis() / 1000) / 30) + offset);
-        return getOneTimeToken(base32Secret, intervals);
+        var intervals = JavaCast("long", Int((getCurrentTime() / 1000) / 30) + arguments.offset);
+        return getOneTimeToken(arguments.base32Secret, intervals);
     }
 
     /**
@@ -122,12 +122,16 @@ component output="false" {
     */
     public string function generateKey (required string password, array salt = [])
     {
-        if (arrayLen(salt) NEQ 16)
+        if (arrayLen(salt) == 0)
         {
             var secureRandom = createObject("java", "java.security.SecureRandom").init();
             var buffer = createObject("java", "java.nio.ByteBuffer").allocate(16);
             arguments.salt = buffer.array();
             secureRandom.nextBytes(arguments.salt);
+        }
+        else if(arrayLen(salt) != 16)
+        {
+            throw(message="Salt must be byte[16]", errorcode="GoogleAuthenticator.BadSalt");
         }
 
         var keyFactory = createObject("java", "javax.crypto.SecretKeyFactory").getInstance("PBKDF2WithHmacSHA1");
@@ -316,5 +320,10 @@ component output="false" {
     public string function Base32decodeString (required any string, string encoding = "utf-8")
     {
         return charsetEncode(base32decode(string), encoding);//createObject("java", "java.lang.String").init(base32decode(string));
+    }
+
+    private numeric function getCurrentTime()
+    {
+        return createObject("java", "java.lang.System").currentTimeMillis();
     }
 }
