@@ -58,4 +58,9 @@ component extends="mxunit.framework.TestCase" output="false" {
         assertTrue(auth.verifyGoogleToken("D5NJOIFNXEB4DL7M", "434975", 1), "Expected last value to succeed with grace");
         assertTrue(auth.verifyGoogleToken("D5NJOIFNXEB4DL7M", "434975", 2), "Expected last value to succeed with excess grace");
     }
+
+    public void function testOTPURL()
+    {
+        assertEquals("otpauth://totp/test@example.com?secret=D5NJOIFNXEB4DL7M", auth.getOTPURL("test@example.com", "D5NJOIFNXEB4DL7M"));
+    }
 }
