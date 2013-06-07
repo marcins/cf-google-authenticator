@@ -55,10 +55,13 @@ component output="false" {
     * @param offset the number of intervals from the current one to use (defaults to the current time interval)
     * @return a string containing the token for the specified offset interval
     */
-    public string function getGoogleToken (required string base32Secret, numeric offset = 0)
+    public string function getGoogleToken (required string base32Secret, numeric offset = 0, numeric currentTime)
     {
-        var intervals = JavaCast("long", Int((createObject("java", "java.lang.System").currentTimeMillis() / 1000) / 30) + offset);
-        return getOneTimeToken(base32Secret, intervals);
+        if (not structKeyExists(arguments, "currentTime")) {
+            arguments.currentTime = createObject("java", "java.lang.System").currentTimeMillis();
+        }
+        var intervals = JavaCast("long", Int((arguments.currentTime / 1000) / 30) + arguments.offset);
+        return getOneTimeToken(arguments.base32Secret, intervals);
     }
 
     /**
@@ -122,12 +125,16 @@ component output="false" {
     */
     public string function generateKey (required string password, array salt = [])
     {
-        if (arrayLen(salt) NEQ 16)
+        if (arrayLen(salt) == 0)
         {
             var secureRandom = createObject("java", "java.security.SecureRandom").init();
             var buffer = createObject("java", "java.nio.ByteBuffer").allocate(16);
             arguments.salt = buffer.array();
             secureRandom.nextBytes(arguments.salt);
+        }
+        else if(arrayLen(salt) != 16)
+        {
+            throw(message="Salt must be byte[16]", errorcode="GoogleAuthenticator.BadSalt");
         }
 
         var keyFactory = createObject("java", "javax.crypto.SecretKeyFactory").getInstance("PBKDF2WithHmacSHA1");
