@@ -67,9 +67,9 @@ component output="false" {
     * @param email the email address of the user account
     * @param key the Base32 encoded secret key to use in the code
     */
-    public string function getOTPURL(required string email, required string key)
+    public string function getOTPURL(required string email, required string key, string issuer="")
     {
-        return 'otpauth://totp/#arguments.email#?secret=#arguments.key#';
+        return 'otpauth://totp/#(Len(arguments.issuer) eq 0?"":arguments.issuer&":")##arguments.email#?secret=#arguments.key#';
     }
 
     /**
