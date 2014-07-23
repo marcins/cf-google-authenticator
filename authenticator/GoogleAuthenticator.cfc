@@ -69,7 +69,7 @@ component output="false" {
     */
     public string function getOTPURL(required string email, required string key, string issuer="")
     {
-        return 'otpauth://totp/#(Len(arguments.issuer) eq 0?"":arguments.issuer&":")##arguments.email#?secret=#arguments.key#';
+        return 'otpauth://totp/#(Len(arguments.issuer) eq 0?"":arguments.issuer&":")##arguments.email#?secret=#arguments.key##(Len(arguments.issuer) eq 0?"":"&issuer="&arguments.issuer)#';
     }
 
     /**
