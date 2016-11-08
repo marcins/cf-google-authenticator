@@ -1,3 +1,9 @@
+I've updated the CFC in a couple of ways
+
+* I've removed the native CF solution in favour of the Apache Commons Codec to implement Base32 encoding/decoding
+* Addd new function getOTPQRURL() which return the a QR code URL you can put straight in to an image tag
+
+
 This is a ColdFusion native implementation of RFC6238 (TOTP: Time-Based One-Time Password Algorithm)  specifically designed to work with the Google Authenticator app. You can use this for providing Two Factor Authentication for your applications.
 
 It has been tested on Adobe Coldfusion 10 because that's what I run locally. It uses a few Java classes and bit twiddling, so YMMV on Railo. It should work on CF9, I don't think I've done anything CF10 specific - but feel free to do a Pull Request if there's a small change required to make this work on CF9 or Railo!
