@@ -23,7 +23,7 @@ To use the Google Authenticator in your own app you would do something like:
 
 ## Implementation notes
 
-This is a purely "native" CF solution - I could've saved some code and time by using Apache Commons Codec to implement Base32 encoding/decoding, however the version bundled with ACF10 is v1.3 and Base32 was added in v1.5 - I didn't want to introduce another dependency.  In fact, the whole project might've been better to be implemented as a Java library since it makes so much use of Java arrays, bit twiddling, etc! Still it was a fun coding exercise!
+This version uses Apache Commons Codec to implement Base32 encoding/decoding which will make it incompativle with ACF10.
 
 ## Notes on security
 
@@ -33,8 +33,6 @@ This is a purely "native" CF solution - I could've saved some code and time by u
 ## Samples
 
 There's a simple sample in the project where you can generate a secret key and then see the token values for that key (and compare to the Authenticator app). This sample is definitely *not* best practice or recommended to be used for anything other than playing around.
-
-The samples use [qrcode.js](http://davidshimjs.github.io/qrcodejs/).
 
 ## Tests
 
