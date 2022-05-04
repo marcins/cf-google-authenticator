@@ -13,6 +13,8 @@ To use the Google Authenticator in your own app you would do something like:
 * the Google Authenticator app allows you to enter a new token using either manual entry or a QRCode - there is a function `getOTPURL` that takes an email address (or other user identifier) and the user's secret key and returns a URL you can encode into a QRCode. There's a sample in the project that uses a Javascript based QRCode generator.
 * when you want to verify the user's token you get the value from the user and then can use `verifyGoogleToken` - this takes the secret you will have saved in the database, the value the user has entered and a grace period. A boolean will be returned.  The grace period is the number of previous values for the token that are allowed. This is useful when the user enters their token just as it ticks over, or they have a slight clock mismatch compared to your server. Generally you'd only allow a grace of 1 or 2 at most.
 
+The `index.cfm` file mentions a blog post that no longer exists, I've put the [contents of that blog](blog.md) into this repo.
+
 ## Implementation notes
 
 This is a purely "native" CF solution - I could've saved some code and time by using Apache Commons Codec to implement Base32 encoding/decoding, however the version bundled with ACF10 is v1.3 and Base32 was added in v1.5 - I didn't want to introduce another dependency.  In fact, the whole project might've been better to be implemented as a Java library since it makes so much use of Java arrays, bit twiddling, etc! Still it was a fun coding exercise!
