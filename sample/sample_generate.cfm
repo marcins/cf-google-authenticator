@@ -25,6 +25,8 @@ THE SOFTWARE.
     <cfscript>
     auth = new authenticator.GoogleAuthenticator();
     key = auth.generateKey(form.password);
+    otpurl = auth.getOTPURL(required string email, required string key);
+    otpqrurl = auth.getOTPQRURL( otpurl );
     </cfscript>
 </cfif>
 <form action="" method="POST">
@@ -34,10 +36,9 @@ THE SOFTWARE.
 </form>
 
 <cfif isDefined("key")>
+    <cfset >
     <cfoutput><p>Your secret key is: #key#</p></cfoutput>
-    <div id="qrcode"></div>
-    <script src="qrcode.min.js"></script>
-    <cfoutput><script>new QRCode(document.getElementById('qrcode'), '#jsstringformat(auth.getOTPURL(form.email, key))#');</script></cfoutput>
+    <cfoutput><img src="#otpqrurl#" alt=""></cfoutput>
     <p><a href="sample_check.cfm?secret=<cfoutput>#key#</cfoutput>">Check token</p>
     <p><a href="sample_verify.cfm?secret=<cfoutput>#key#</cfoutput>">Verify token</p>
 </cfif>

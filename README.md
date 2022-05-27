@@ -1,6 +1,14 @@
+## Updates
+I've updated the CFC in a couple of ways
+
+* I've removed the native CF solution in favour of the Apache Commons Codec to implement Base32 encoding/decoding
+* Added new function getOTPQRURL() which return the a QR code URL you can put straight in to an image tag
+
+## Intro
+
 This is a ColdFusion native implementation of RFC6238 (TOTP: Time-Based One-Time Password Algorithm)  specifically designed to work with the Google Authenticator app. You can use this for providing Two Factor Authentication for your applications.
 
-It has been tested on Adobe Coldfusion 10 because that's what I run locally. It uses a few Java classes and bit twiddling, so YMMV on Railo. It should work on CF9, I don't think I've done anything CF10 specific - but feel free to do a Pull Request if there's a small change required to make this work on CF9 or Railo!
+It has been tested on Adobe Coldfusion 10 because that's what I run locally. It uses a few Java classes and bit twiddling, so YMMV on Lucee/Railo. It should work on CF9, I don't think I've done anything CF10 specific - but feel free to do a Pull Request if there's a small change required to make this work on CF9 or Lucee/Railo!
 
 ## Background
 
@@ -17,7 +25,7 @@ The `index.cfm` file mentions a blog post that no longer exists, I've put the [c
 
 ## Implementation notes
 
-This is a purely "native" CF solution - I could've saved some code and time by using Apache Commons Codec to implement Base32 encoding/decoding, however the version bundled with ACF10 is v1.3 and Base32 was added in v1.5 - I didn't want to introduce another dependency.  In fact, the whole project might've been better to be implemented as a Java library since it makes so much use of Java arrays, bit twiddling, etc! Still it was a fun coding exercise!
+This version uses Apache Commons Codec to implement Base32 encoding/decoding which will make it incompativle with ACF10.
 
 ## Notes on security
 
@@ -28,11 +36,9 @@ This is a purely "native" CF solution - I could've saved some code and time by u
 
 There's a simple sample in the project where you can generate a secret key and then see the token values for that key (and compare to the Authenticator app). This sample is definitely *not* best practice or recommended to be used for anything other than playing around.
 
-The samples use [qrcode.js](http://davidshimjs.github.io/qrcodejs/).
-
 ## Tests
 
-There are some [mxunit](http://mxunit.org/) based tests that can be run from `/tests/index.cfm`.  They assume that mxunit is mapped at the server level to /mxunit.  If we had Railo CLI I could make them not depend on a web server!
+There are some [mxunit](http://mxunit.org/) based tests that can be run from `/tests/index.cfm`.  They assume that mxunit is mapped at the server level to /mxunit.  If we had Lucee/Railo CLI I could make them not depend on a web server!
 
 ## Licence
 
